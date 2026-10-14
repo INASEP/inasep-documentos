@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Envío de documentos · INASEP</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  /* Credencial: lo único "especial" de la página */
+  .cred {
+    position: relative; overflow: hidden; color: #fff;
+    background: linear-gradient(135deg, var(--bosque) 0%, var(--bosque-2) 100%);
+    border: 1px solid var(--bosque); border-top: 5px solid var(--oro);
+    border-radius: 6px; padding: 1.7rem 1.8rem 1.5rem; margin-bottom: 1.25rem;
+  }
+  .cred::after {
+    content: ''; position: absolute; right: -28px; top: 50%; width: 230px; height: 230px;
+    transform: translateY(-50%); background: url(assets/logo.png) center/contain no-repeat; opacity: .13; pointer-events: none;
+  }
+  .cred small { display: block; font-size: .82rem; color: #b9c8bd; margin-bottom: .35rem; }
+  .cred .nombre { font-family: var(--serif); font-size: clamp(1.5rem, 4.5vw, 2.1rem); font-weight: 600; line-height: 1.15; max-width: 82%; overflow-wrap: anywhere; }
+  .cred .meta { display: flex; flex-wrap: wrap; gap: .4rem 2rem; margin-top: 1rem; font-size: .9rem; color: #dbe5dd; }
+  .cred .meta b { color: var(--oro-claro); font-weight: 600; font-variant-numeric: tabular-nums; }
+
+  .note-warn { background: var(--alerta-bg); border-color: #c99a1e; color: #5c4300; }
+  .vig { display: inline-block; font-size: .72rem; font-weight: 600; background: var(--alerta-bg); color: var(--alerta); border: 1px solid #e3c36a; border-radius: 99px; padding: .05rem .55rem; margin-left: .4rem; vertical-align: .08em; white-space: nowrap; }
+  .meter { display: flex; align-items: center; gap: .8rem; margin: .2rem 0 1.1rem; font-size: .85rem; color: var(--suave); }
+  .meter .bar { flex: 1; height: 6px; background: var(--linea-2); border-radius: 9px; overflow: hidden; }
+  .meter .bar i { display: block; height: 100%; width: 0; background: var(--oro); transition: width .3s; }
+
+  .doc { display: grid; grid-template-columns: 1fr auto; gap: .5rem 1rem; align-items: center;
+         padding: 1rem 0; border-top: 1px solid var(--linea-2); }
+  .doc:first-of-type { border-top: 0; }
+  .doc .t { font-weight: 600; font-size: .95rem; }
+  .doc .h { font-size: .8rem; color: var(--suave); }
+  .doc .f { grid-column: 1 / -1; font-size: .82rem; display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  .doc .f .name { overflow-wrap: anywhere; }
+  .doc .f .x { background: none; border: 0; color: var(--error); cursor: pointer; font-size: .8rem; text-decoration: underline; padding: 0; }
+  .doc.ready { }
+  .doc.err .f { color: var(--error); }
+  .pick { position: relative; }
+  .pick input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; }
+  .pick:focus-within { outline: 3px solid var(--oro); outline-offset: 2px; border-radius: 4px; }
+  .pick .btn { pointer-events: none; }
+  .tick { display: inline-grid; place-items: center; width: 1.2rem; height: 1.2rem; border-radius: 50%; background: var(--ok); color: #fff; font-size: .72rem; flex: none; }
+  .prog { grid-column: 1 / -1; height: 5px; background: var(--linea-2); border-radius: 9px; overflow: hidden; }
+  .prog i { display: block; height: 100%; width: 0; background: var(--bosque-3); transition: width .15s; }
+
+  .decl { display: flex; gap: .8rem; align-items: flex-start; padding: 1rem 1.1rem; background: #f3f6f1; border: 1px solid var(--linea); border-radius: 4px; margin: 1.2rem 0; font-size: .86rem; }
+  .decl input { width: 1.25rem; height: 1.25rem; margin-top: .15rem; accent-color: var(--bosque); flex: none; }
+
+  .center { text-align: center; padding: 2.4rem 1.5rem; }
+  .center h2 { font-family: var(--serif); font-size: 1.5rem; margin-bottom: .5rem; }
+  .center p { color: var(--suave); max-width: 46ch; margin: 0 auto .6rem; }
+  .big-ok { width: 64px; height: 64px; border-radius: 50%; background: var(--bosque); color: var(--oro); display: grid; place-items: center; font-size: 1.9rem; margin: 0 auto 1rem; border: 3px solid var(--oro); }
+  .recibo { text-align: left; max-width: 420px; margin: 1.4rem auto 0; border-top: 1px solid var(--linea); padding-top: 1rem; font-size: .88rem; }
+  .recibo li { list-style: none; display: flex; gap: .5rem; padding: .25rem 0; }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <img src="assets/logo.png" alt="INASEP" width="54" height="54">
+    <div>
+      <h1>Envío de documentos</h1>
+      <p>Instituto INASEP SpA</p>
+    </div>
+  </div>
+</header>
+
+<main class="narrow">
+  <div id="v-load" class="card center"><p><span class="spin"></span>&nbsp; Verificando tu enlace…</p></div>
+
+  <!-- Enlace inválido / usado / vencido -->
+  <div id="v-bad" class="card center" hidden>
+    <h2 id="badTitle"></h2>
+    <p id="badText"></p>
+    <p>Escríbenos a <a id="badMail" href="#"></a> y te enviaremos un enlace nuevo.</p>
+  </div>
+
+  <!-- Formulario -->
+  <div id="v-form" hidden>
+    <section class="cred" aria-label="Datos de la persona">
+      <small>Documentos de</small>
+      <div class="nombre" id="cNombre"></div>
+      <div class="meta">
+        <span>RUT <b id="cRut"></b></span>
+        <span id="cCursoWrap" hidden>Programa <b id="cCurso"></b></span>
+        <span>Enlace válido hasta <b id="cExpira"></b></span>
+      </div>
+    </section>
+
+    <form id="docForm" class="card" novalidate>
+      <h2>Adjunta tus documentos</h2>
+      <p class="lead">Cada archivo debe ser PDF, JPG o PNG y pesar hasta <span id="maxMb">5</span> MB. Si tomas una foto con el teléfono, la reducimos automáticamente.</p>
+
+      <div id="vigBox" class="note note-warn" hidden></div>
+      <div class="meter"><span id="meterTxt">0 de 5 listos</span><div class="bar"><i id="meterBar"></i></div></div>
+      <div id="docs"></div>
+
+      <label class="decl" for="ack">
+        <input type="checkbox" id="ack">
+        <span>Declaro que los documentos adjuntos son <strong>reales y auténticos</strong>. Eximo a <strong>INASEP</strong> de toda responsabilidad si fueran adulterados o falsificados.</span>
+      </label>
+
+      <p id="formErr" class="note note-err" hidden></p>
+      <button id="send" class="btn btn-primary btn-block" type="submit" disabled>Enviar documentos</button>
+      <p class="hint" style="text-align:center;margin-top:.8rem">Este enlace es personal y se desactiva al enviar. Tus archivos se guardan en una carpeta privada de INASEP.</p>
+    </form>
+  </div>
+
+  <!-- Listo -->
+  <div id="v-done" class="card center" hidden>
+    <div class="big-ok" aria-hidden="true">✓</div>
+    <h2>Documentos recibidos</h2>
+    <p>Gracias, <span id="dNombre"></span>. INASEP revisará tu documentación y te contactará si falta algo.</p>
+    <ul class="recibo" id="dList"></ul>
+    <p class="hint" id="dFecha" style="margin-top:1rem"></p>
+  </div>
+</main>
+
+<footer>INASEP · Quilpué</footer>
+
+<script src="config.js"></script>
+<script>
+(() => {
+'use strict';
+const C = window.INASEP;
+const $ = id => document.getElementById(id);
+const MAX = C.MAX_MB * 1024 * 1024;
+const fmtDT = ms => new Date(ms).toLocaleString('es-CL', { timeZone: 'America/Santiago', dateStyle: 'long', timeStyle: 'short' });
+const fmtSize = n => n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+
+let token = '';
+let docsReq = [];
+let info = null;
+const slots = {}; // key → { file, done, el }
+
+function show(id) { for (const v of ['v-load', 'v-bad', 'v-form', 'v-done']) $(v).hidden = v !== id; }
+
+function normToken(s) { return String(s || '').toUpperCase().replace(/[^A-Z0-9]/g, ''); }
+
+async function api(path, opts) {
+  let r;
+  try { r = await fetch(C.WORKER_URL + path, opts); }
+  catch { throw { code: 'network' }; }
+  let j = {};
+  try { j = await r.json(); } catch {}
+  if (!r.ok || !j.ok) throw { code: j.error || 'error', status: r.status };
+  return j;
+}
+
+/* ── Arranque ── */
+async function start() {
+  const t = normToken(new URLSearchParams(location.search).get('t'));
+  if (!t) { showBad('Falta tu enlace', 'Abre el enlace completo que te envió INASEP por WhatsApp o correo.'); return; }
+  await openToken(t);
+}
+
+async function openToken(t) {
+  show('v-load');
+  try {
+    info = await api('/api/token?t=' + encodeURIComponent(t));
+    token = t;
+    history.replaceState(null, '', '?t=' + t);
+    renderForm();
+    show('v-form');
+  } catch (e) {
+    if (e.code === 'network') { showBad('No pudimos conectar', 'Revisa tu conexión a internet y recarga la página.'); return; }
+    const m = {
+      used:    ['Este enlace ya fue utilizado', 'Los documentos asociados a este enlace ya fueron enviados.'],
+      expired: ['Este enlace venció', 'Los enlaces de INASEP son válidos por 12 horas.'],
+    }[e.code] || ['Enlace no válido', 'No encontramos este enlace. Revisa que lo hayas abierto completo.'];
+    showBad(m[0], m[1]);
+  }
+}
+
+function showBad(title, text) {
+  $('badTitle').textContent = title; $('badText').textContent = text;
+  $('badMail').textContent = C.CONTACTO; $('badMail').href = 'mailto:' + C.CONTACTO;
+  show('v-bad');
+}
+
+
+/* ── Formulario ── */
+function renderForm() {
+  $('cNombre').textContent = info.nombre;
+  $('cRut').textContent = formatRut(info.rut);
+  $('cExpira').textContent = fmtDT(info.expira);
+  if (info.curso) { $('cCurso').textContent = info.curso; $('cCursoWrap').hidden = false; }
+  $('maxMb').textContent = C.MAX_MB;
+
+  const wrap = $('docs'); wrap.innerHTML = '';
+  const req = info.requeridos || C.DOCS.map(d => d.key);
+  docsReq = C.DOCS.filter(d => req.includes(d.key));
+  const vig = docsReq.filter(d => d.vigencia);
+  if (vig.length) {
+    const nombres = vig.map(d => '<strong>' + esc(d.corto) + '</strong>');
+    $('vigBox').innerHTML = `<strong>Antes de subirlos:</strong> el ${nombres.join(' y el ')} debe${vig.length > 1 ? 'n' : ''} haberse emitido dentro de los últimos <strong>${C.VIGENCIA_DIAS} días</strong>. ${vig.length > 1 ? 'Si alguno tiene más tiempo, no será aceptado' : 'Si tiene más tiempo, no será aceptado'}; tendrás que pedir uno nuevo.`;
+    $('vigBox').hidden = false;
+  }
+  for (const d of docsReq) {
+    const done = (info.subidos || []).includes(d.key);
+    const row = document.createElement('div');
+    row.className = 'doc';
+    row.innerHTML = `
+      <div>
+        <div class="t">${esc(d.label)}${d.vigencia ? `<span class="vig">Máx. ${C.VIGENCIA_DIAS} días de emitido</span>` : ''}</div>
+        ${d.help ? `<div class="h">${esc(d.help)} ${d.link ? `<a href="${esc(d.link)}" target="_blank" rel="noopener">Abrir sitio</a>` : ''}</div>` : ''}
+      </div>
+      <div class="pick"><span class="btn btn-line btn-sm">Elegir archivo</span>
+        <input type="file" accept=".pdf,.jpg,.jpeg,.png,application/pdf,image/jpeg,image/png" aria-label="${esc(d.label)}"></div>
+      <div class="f"></div>
+      <div class="prog" hidden><i></i></div>`;
+    wrap.appendChild(row);
+    const s = slots[d.key] = { file: null, done, el: row, def: d };
+    row.querySelector('input').addEventListener('change', ev => pickFile(d.key, ev.target.files[0], ev.target));
+    paint(d.key);
+  }
+  update();
+}
+
+function formatRut(r) {
+  const [b, dv] = String(r).split('-');
+  return b.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv;
+}
+
+function paint(key, err) {
+  const s = slots[key], f = s.el.querySelector('.f'), btn = s.el.querySelector('.pick .btn');
+  s.el.classList.toggle('err', !!err);
+  if (err) { f.innerHTML = esc(err); btn.textContent = 'Elegir archivo'; return; }
+  if (s.file) {
+    f.innerHTML = `<span class="tick">✓</span><span class="name">${esc(s.file.name)} · ${fmtSize(s.file.size)}</span><button type="button" class="x">Quitar</button>`;
+    f.querySelector('.x').onclick = () => { s.file = null; paint(key); update(); };
+    btn.textContent = 'Cambiar';
+  } else if (s.done) {
+    f.innerHTML = `<span class="tick">✓</span><span>Ya recibido. Puedes reemplazarlo si quieres.</span>`;
+    btn.textContent = 'Reemplazar';
+  } else { f.innerHTML = ''; btn.textContent = 'Elegir archivo'; }
+}
+
+function typeOk(file) {
+  return /^(application\/pdf|image\/jpeg|image\/png)$/.test(file.type) ||
+    (!file.type && /\.(pdf|jpe?g|png)$/i.test(file.name));
+}
+
+async function pickFile(key, file, input) {
+  if (!file) return;
+  $('formErr').hidden = true;
+  if (!typeOk(file)) { slots[key].file = null; paint(key, 'Ese formato no sirve. Sube un PDF, JPG o PNG.'); input.value = ''; update(); return; }
+  try {
+    let f = file;
+    if (f.size > MAX && f.type.startsWith('image/')) f = await shrinkImage(f);
+    if (f.size > MAX) throw new Error(`El archivo pesa ${fmtSize(file.size)}. El máximo es ${C.MAX_MB} MB.`);
+    slots[key].file = f;
+    paint(key);
+  } catch (e) {
+    slots[key].file = null; paint(key, e.message || 'No pudimos leer ese archivo.');
+  }
+  input.value = '';
+  update();
+}
+
+function shrinkImage(file) {
+  return new Promise((resolve, reject) => {
+    const img = new Image(), url = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+      let w = img.naturalWidth, h = img.naturalHeight; const k = Math.min(1, 2200 / Math.max(w, h));
+      w = Math.round(w * k); h = Math.round(h * k);
+      const cv = document.createElement('canvas'); cv.width = w; cv.height = h;
+      const ctx = cv.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h);
+      cv.toBlob(b => b ? resolve(new File([b], file.name.replace(/\.\w+$/, '') + '.jpg', { type: 'image/jpeg' })) : reject(new Error('No pudimos reducir la imagen.')), 'image/jpeg', 0.85);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('No pudimos abrir la imagen.')); };
+    img.src = url;
+  });
+}
+
+function update() {
+  const keys = Object.keys(slots);
+  const ready = keys.filter(k => slots[k].file || slots[k].done).length;
+  $('meterTxt').textContent = `${ready} de ${keys.length} listos`;
+  $('meterBar').style.width = (ready / keys.length * 100) + '%';
+  $('send').disabled = !(ready === keys.length && $('ack').checked);
+}
+$('ack').addEventListener('change', update);
+
+/* ── Envío ── */
+function toBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(String(r.result).split(',')[1]);
+    r.onerror = () => rej(new Error('No pudimos leer el archivo.'));
+    r.readAsDataURL(file);
+  });
+}
+
+function uploadOne(key, file, onProgress) {
+  return toBase64(file).then(data => new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', `${C.WORKER_URL}/api/upload?t=${token}&slot=${key}`);
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    xhr.upload.onprogress = e => e.lengthComputable && onProgress(e.loaded / e.total);
+    xhr.onload = () => {
+      let j = {}; try { j = JSON.parse(xhr.responseText); } catch {}
+      if (xhr.status === 200 && j.ok) return resolve(j);
+      reject({ code: j.error || 'error', status: xhr.status });
+    };
+    xhr.onerror = () => reject({ code: 'network' });
+    xhr.send(JSON.stringify({ name: file.name, mime: file.type, data }));
+  }));
+}
+
+function friendly(e) {
+  return ({
+    network: 'Se cortó la conexión. Revisa tu internet y vuelve a intentar: lo ya enviado se conserva.',
+    too_large: 'Un archivo es demasiado grande.',
+    drive_error: 'No pudimos guardar el archivo. Intenta de nuevo en unos minutos.',
+    drive_unreachable: 'El almacenamiento no respondió. Intenta de nuevo en unos minutos.',
+    used: 'Este enlace ya fue utilizado.', expired: 'Este enlace venció.', invalid: 'Enlace no válido.',
+  })[e.code] || 'Ocurrió un error inesperado. Intenta de nuevo.';
+}
+
+$('docForm').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const btn = $('send'); $('formErr').hidden = true;
+  btn.disabled = true; btn.innerHTML = '<span class="spin"></span>&nbsp; Enviando…';
+  document.querySelectorAll('#docForm input').forEach(i => i.disabled = true);
+  try {
+    const keys = Object.keys(slots), todo = keys.filter(k => slots[k].file);
+    let i = 0;
+    for (const k of todo) {
+      i++;
+      const prog = slots[k].el.querySelector('.prog'), bar = prog.firstElementChild;
+      prog.hidden = false;
+      btn.innerHTML = `<span class="spin"></span>&nbsp; Enviando ${i} de ${todo.length}…`;
+      await uploadOne(k, slots[k].file, p => bar.style.width = (p * 100) + '%');
+      bar.style.width = '100%'; slots[k].done = true; slots[k].file = null; paint(k);
+    }
+    await api('/api/finish?t=' + token, { method: 'POST' });
+    $('dNombre').textContent = info.nombre.split(' ')[0];
+    $('dList').innerHTML = docsReq.map(d => `<li><span class="tick">✓</span>${esc(d.label)}</li>`).join('');
+    $('dFecha').textContent = 'Recibido el ' + fmtDT(Date.now());
+    show('v-done'); window.scrollTo({ top: 0, behavior: 'smooth' });
+  } catch (e) {
+    $('formErr').textContent = friendly(e); $('formErr').hidden = false;
+    document.querySelectorAll('#docForm input').forEach(i => i.disabled = false);
+    document.querySelectorAll('.prog').forEach(p => p.hidden = true);
+    btn.textContent = 'Reintentar envío'; update();
+  }
+});
+
+start();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,15 @@
+name = "inasep-docs"
+main = "worker.js"
+compatibility_date = "2026-01-01"
+
+[vars]
+ALLOWED_ORIGINS     = "https://inasep.github.io"
+ADMIN_EMAILS        = "coordinacion.inasep@gmail.com,coordinacion@inasep.cl"
+FIREBASE_PROJECT_ID = "inasep-contratos"
+SCRIPT_URL          = "https://script.google.com/macros/s/REEMPLAZAR/exec"
+
+[[kv_namespaces]]
+binding = "DOCS_KV"
+id = "REEMPLAZAR_CON_ID_DEL_KV"
+
+# El secreto NO va aquí:  npx wrangler secret put SCRIPT_SECRET

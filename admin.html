@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Documentos de matrícula · Coordinación INASEP</title>
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans:wght@400;500;600&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+  .tabs { display: flex; gap: .25rem; border-bottom: 1px solid var(--linea); margin-bottom: 1.4rem; }
+  .tab { background: none; border: 0; padding: .75rem 1.1rem; font-weight: 600; font-size: .95rem; color: var(--suave); cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -1px; }
+  .tab[aria-selected=true] { color: var(--bosque); border-bottom-color: var(--oro); }
+  .tab .n { font-weight: 500; font-size: .78rem; background: var(--linea-2); border-radius: 99px; padding: .05rem .5rem; margin-left: .35rem; color: var(--suave); }
+
+  /* Login */
+  .login { max-width: 400px; margin: 3rem auto; }
+  .login img { width: 84px; margin: 0 auto 1rem; }
+  .login h2 { text-align: center; font-family: var(--serif); font-size: 1.4rem; }
+  .login .lead { text-align: center; margin-left: auto; margin-right: auto; }
+
+  /* Folio */
+  .folio {
+    position: relative; overflow: hidden; background: var(--bosque); color: #fff; border-radius: 6px;
+    border: 1px solid var(--bosque); border-left: 6px solid var(--oro); padding: 1.3rem 1.5rem; margin-bottom: 1.4rem;
+  }
+  .folio::after { content: ''; position: absolute; right: -20px; top: 50%; width: 170px; height: 170px; transform: translateY(-50%); background: url(assets/logo.png) center/contain no-repeat; opacity: .12; pointer-events: none; }
+  .folio small { color: #b9c8bd; font-size: .8rem; }
+  .folio .code { font-family: var(--mono); font-weight: 600; font-size: clamp(1.25rem, 4.2vw, 1.9rem); letter-spacing: .1em; color: var(--oro-claro); margin: .15rem 0 .35rem; overflow-wrap: anywhere; }
+  .folio .who { font-size: .92rem; color: #dbe5dd; }
+  .folio .link { margin: .9rem 0; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); border-radius: 4px; padding: .5rem .7rem; font-family: var(--mono); font-size: .76rem; color: #e8efe9; overflow-wrap: anywhere; position: relative; z-index: 1; }
+  .folio .row { display: flex; flex-wrap: wrap; gap: .5rem; position: relative; z-index: 1; }
+  .folio .btn-line { color: #fff; border-color: rgba(255,255,255,.4); }
+  .folio .btn-line:hover { background: rgba(255,255,255,.1); border-color: #fff; }
+
+  /* Tabla */
+  .tools { display: flex; flex-wrap: wrap; gap: .6rem; margin-bottom: 1rem; align-items: center; }
+  .tools .input { max-width: 300px; }
+  .tools select.input { max-width: 190px; }
+  .tools .spacer { flex: 1; }
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  th { text-align: left; font-size: .78rem; font-weight: 600; color: var(--suave); padding: .55rem .7rem; border-bottom: 2px solid var(--linea); white-space: nowrap; }
+  td { padding: .7rem; border-bottom: 1px solid var(--linea-2); vertical-align: middle; }
+  tbody tr:hover { background: #f6f8f4; }
+  .nm { font-weight: 600; }
+  .sub { font-size: .78rem; color: var(--suave); font-variant-numeric: tabular-nums; }
+  .acts { display: flex; gap: .35rem; flex-wrap: wrap; }
+  .empty { text-align: center; color: var(--suave); padding: 2.4rem 1rem; font-size: .92rem; }
+
+  /* Carpetas */
+  .people { display: grid; gap: .6rem; }
+  .person { display: grid; grid-template-columns: auto 1fr auto; gap: 1rem; align-items: center; padding: .9rem 1.1rem; border: 1px solid var(--linea); border-radius: 6px; background: #fff; cursor: pointer; text-align: left; width: 100%; }
+  .person:hover { border-color: var(--bosque-3); background: #f6f8f4; }
+  .folder-ic { width: 42px; height: 34px; position: relative; flex: none; }
+  .folder-ic::before { content: ''; position: absolute; left: 0; top: 0; width: 18px; height: 7px; background: var(--oro); border-radius: 3px 3px 0 0; }
+  .folder-ic::after { content: ''; position: absolute; left: 0; top: 5px; right: 0; bottom: 0; background: var(--bosque); border-radius: 2px 5px 5px 5px; border-top: 2px solid var(--oro); }
+  .person .nm { font-size: 1rem; }
+  .person .right { text-align: right; font-size: .8rem; color: var(--suave); }
+
+  /* Diálogo */
+  dialog { border: 0; border-radius: 8px; padding: 0; width: min(760px, 94vw); max-height: 92vh; overflow: auto; box-shadow: 0 20px 60px rgba(8,22,13,.4); }
+  dialog::backdrop { background: rgba(10,26,16,.62); }
+  .dh { background: var(--bosque); color: #fff; padding: 1.2rem 1.5rem; border-bottom: 4px solid var(--oro); display: flex; gap: 1rem; align-items: flex-start; }
+  .dh h3 { font-family: var(--serif); font-size: 1.4rem; font-weight: 600; line-height: 1.2; }
+  .dh p { color: #b9c8bd; font-size: .86rem; margin-top: .2rem; }
+  .dh .x { margin-left: auto; background: none; border: 0; color: #fff; font-size: 1.6rem; line-height: 1; cursor: pointer; padding: 0 .2rem; }
+  .db { padding: 1.2rem 1.5rem 1.5rem; }
+  .drow { display: grid; grid-template-columns: 1fr auto; gap: .4rem 1rem; align-items: center; padding: .75rem 0; border-bottom: 1px solid var(--linea-2); }
+  .drow .t { font-weight: 600; font-size: .92rem; }
+  .drow.miss .t { color: var(--suave); font-weight: 500; }
+  .dfoot { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.1rem; }
+  .prev { margin-top: 1rem; border: 1px solid var(--linea); border-radius: 6px; background: #f3f6f1; overflow: hidden; }
+  .prev iframe { width: 100%; height: 62vh; border: 0; display: block; }
+  .prev img { max-height: 62vh; margin: 0 auto; }
+  .prev .bar { display: flex; justify-content: space-between; padding: .5rem .8rem; font-size: .82rem; background: #e7ede4; }
+
+  .toast { position: fixed; left: 50%; bottom: 1.4rem; transform: translateX(-50%); background: var(--bosque); color: #fff; padding: .7rem 1.2rem; border-radius: 6px; border-left: 4px solid var(--oro); font-size: .88rem; z-index: 99; box-shadow: 0 8px 24px rgba(0,0,0,.25); }
+
+  @media (max-width: 640px) {
+    .person { grid-template-columns: auto 1fr; }
+    .person .right { grid-column: 1 / -1; text-align: left; }
+    .tab { padding: .7rem .7rem; font-size: .88rem; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-in">
+    <img src="assets/logo.png" alt="INASEP" width="54" height="54">
+    <div>
+      <h1>Documentos de matrícula</h1>
+      <p>Coordinación INASEP · uso interno</p>
+    </div>
+    <div class="spacer"></div>
+    <div id="who" hidden style="display:flex;align-items:center;gap:.8rem;font-size:.82rem;color:#b9c8bd">
+      <span id="whoMail"></span>
+      <button class="btn btn-line btn-sm" id="logout" style="color:#fff;border-color:rgba(255,255,255,.4)">Salir</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Login -->
+  <section id="s-login" class="card login" hidden>
+    <img src="assets/logo.png" alt="" width="84" height="84">
+    <h2>Panel de coordinación</h2>
+    <p class="lead">Ingresa con tu cuenta de INASEP.</p>
+    <form id="loginForm">
+      <div class="field"><label for="em">Correo</label><input id="em" type="email" autocomplete="username" required></div>
+      <div class="field"><label for="pw">Contraseña</label><input id="pw" type="password" autocomplete="current-password" required></div>
+      <p id="loginErr" class="note note-err" hidden></p>
+      <button id="loginBtn" class="btn btn-primary btn-block" type="submit">Ingresar</button>
+    </form>
+  </section>
+
+  <!-- Sin permiso -->
+  <section id="s-denied" class="card" hidden style="max-width:520px;margin:3rem auto;text-align:center">
+    <h2>Esta cuenta no tiene acceso</h2>
+    <p class="lead" style="margin:.5rem auto 1.2rem">Pide a quien administra el sistema que agregue tu correo a la lista de coordinación.</p>
+    <button class="btn btn-primary" id="deniedOut">Cambiar de cuenta</button>
+  </section>
+
+  <!-- Panel -->
+  <div id="s-app" hidden>
+    <div class="tabs" role="tablist">
+      <button class="tab" role="tab" id="tab-links" aria-selected="true" aria-controls="p-links">Enlaces de carga</button>
+      <button class="tab" role="tab" id="tab-docs" aria-selected="false" aria-controls="p-docs">Carpetas recibidas<span class="n" id="nDocs">0</span></button>
+    </div>
+
+    <!-- Enlaces -->
+    <div id="p-links" role="tabpanel">
+      <section class="card">
+        <h2>Nuevo enlace de carga</h2>
+        <p class="lead">Escribe el nombre y el RUT de la persona. Se genera un solo enlace para enviarle por WhatsApp o correo. El enlace sirve una sola vez y vence en 12 horas.</p>
+        <form id="newForm" novalidate>
+          <div class="grid2">
+            <div class="field"><label for="fNombre">Nombre completo</label><input id="fNombre" type="text" autocomplete="off" placeholder="Juan Pérez González"></div>
+            <div class="field"><label for="fRut">RUT</label><input id="fRut" type="text" inputmode="text" autocomplete="off" placeholder="12.345.678-9"><div class="hint" id="rutHint"></div></div>
+          </div>
+          <div class="grid2">
+            <div class="field"><label for="fCurso">Curso</label>
+              <select id="fCurso"><option value="">Elige un curso…</option></select>
+            </div>
+            <div class="field" id="sexoField" hidden><label for="fSexo">Sexo</label>
+              <select id="fSexo"><option value="">Elige…</option><option value="H">Hombre</option><option value="M">Mujer</option></select>
+              <div class="hint">Define si debe subir la situación militar.</div>
+            </div>
+          </div>
+          <div id="reqHint" class="note note-info" hidden></div>
+          <div class="field"><label for="fNota">Nota interna <span class="opt">(opcional)</span></label><input id="fNota" type="text" autocomplete="off" placeholder="Grupo octubre · Sede Quilpué"></div>
+          <p id="newErr" class="note note-err" hidden></p>
+          <button id="newBtn" class="btn btn-gold" type="submit">Generar enlace</button>
+        </form>
+      </section>
+
+      <section id="folio" class="folio" hidden aria-live="polite">
+        <small>Enlace listo para enviar</small>
+        <div class="who" id="fWho" style="font-size:1.05rem;margin:.2rem 0 .1rem"></div>
+        <div class="who" id="fExp" style="color:var(--oro-claro)"></div>
+        <div class="link" id="fLink"></div>
+        <div class="row">
+          <button class="btn btn-gold btn-sm" id="fCopy">Copiar enlace</button>
+          <button class="btn btn-line btn-sm" id="fWa">Enviar por WhatsApp</button>
+          <button class="btn btn-line btn-sm" id="fMail">Enviar por correo</button>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>Enlaces generados</h2>
+        <div class="tools" style="margin-top:.8rem">
+          <input id="qLinks" class="input" type="search" placeholder="Buscar por nombre o RUT" aria-label="Buscar enlaces">
+          <select id="stLinks" class="input" aria-label="Filtrar por estado">
+            <option value="">Todos los estados</option><option value="pendiente">Pendientes</option><option value="usado">Enviados</option><option value="expirado">Vencidos</option>
+          </select>
+          <span class="spacer"></span>
+          <button class="btn btn-line btn-sm" id="reload">Actualizar</button>
+        </div>
+        <div class="scroll"><div id="tbl"></div></div>
+      </section>
+    </div>
+
+    <!-- Carpetas -->
+    <div id="p-docs" role="tabpanel" hidden>
+      <section class="card">
+        <h2>Carpetas recibidas</h2>
+        <p class="lead">Cada persona tiene su propia carpeta en Google Drive. Aquí puedes revisar, descargar o abrir sus documentos.</p>
+        <div class="tools">
+          <input id="qDocs" class="input" type="search" placeholder="Buscar por nombre o RUT" aria-label="Buscar carpetas">
+          <span class="spacer"></span>
+          <button class="btn btn-line btn-sm" id="reload2">Actualizar</button>
+        </div>
+        <div id="people" class="people"></div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<dialog id="dlg" aria-labelledby="dTitle">
+  <div class="dh">
+    <div><h3 id="dTitle"></h3><p id="dSub"></p></div>
+    <button class="x" id="dClose" aria-label="Cerrar">×</button>
+  </div>
+  <div class="db">
+    <div id="dMeta" class="sub" style="margin-bottom:.5rem"></div>
+    <div id="dDatos" class="sub" style="margin:.2rem 0 .8rem"></div>
+    <div id="dRows"></div>
+    <div id="dPrev" class="prev" hidden></div>
+    <div class="dfoot">
+      <button class="btn btn-primary btn-sm" id="dZip">Descargar todo (.zip)</button>
+      <a class="btn btn-line btn-sm" id="dDrive" target="_blank" rel="noopener">Abrir carpeta en Drive</a>
+    </div>
+  </div>
+</dialog>
+
+<div id="toast" class="toast" hidden role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js" defer></script>
+<script src="config.js"></script>
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+const C = window.INASEP;
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+const fmtD = ms => ms ? new Date(ms).toLocaleString('es-CL', { timeZone: 'America/Santiago', day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '—';
+const fmtSize = n => n >= 1048576 ? (n / 1048576).toFixed(1) + ' MB' : Math.max(1, Math.round(n / 1024)) + ' KB';
+const fmtRut = r => { const [b, dv] = String(r).split('-'); return b.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + '-' + dv; };
+
+const auth = getAuth(initializeApp(C.FIREBASE));
+let list = [];
+let courses = [];
+let lastCreated = null;
+
+/* ── Utilidades ── */
+function toast(msg) { const t = $('toast'); t.textContent = msg; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => t.hidden = true, 2600); }
+function view(id) { for (const v of ['s-login', 's-denied', 's-app']) $(v).hidden = v !== id; $('who').hidden = id === 's-login'; }
+
+function formUrl() { return C.FORM_URL || (location.origin + location.pathname.replace(/[^/]*$/, '')); }
+const linkOf = t => formUrl() + (formUrl().includes('?') ? '&' : '?') + 't=' + t;
+
+async function adm(path, opts = {}) {
+  const user = auth.currentUser;
+  if (!user) throw { code: 'unauthorized' };
+  const idToken = await user.getIdToken();
+  let r;
+  try { r = await fetch(C.WORKER_URL + path, { ...opts, headers: { ...(opts.headers || {}), Authorization: 'Bearer ' + idToken } }); }
+  catch { throw { code: 'network' }; }
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || j.ok === false) throw { code: j.error || 'error', status: r.status, msg: j.error };
+  return j;
+}
+
+/* ── Login ── */
+onAuthStateChanged(auth, async user => {
+  if (!user) { view('s-login'); return; }
+  $('whoMail').textContent = user.email;
+  try {
+    await Promise.all([loadCourses(), loadList()]);
+    view('s-app');
+  } catch (e) {
+    if (e.status === 403) view('s-denied');
+    else { view('s-app'); toast('No pudimos cargar los datos: ' + (e.code === 'network' ? 'sin conexión con el servidor' : e.code)); }
+  }
+});
+
+$('loginForm').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const err = $('loginErr'); err.hidden = true;
+  const b = $('loginBtn'); b.disabled = true; b.textContent = 'Verificando…';
+  try { await signInWithEmailAndPassword(auth, $('em').value.trim(), $('pw').value); }
+  catch (e) {
+    err.textContent = ({
+      'auth/invalid-credential': 'Correo o contraseña incorrectos.', 'auth/wrong-password': 'Contraseña incorrecta.',
+      'auth/user-not-found': 'Ese correo no está registrado.', 'auth/invalid-email': 'El correo no tiene un formato válido.',
+      'auth/too-many-requests': 'Demasiados intentos. Espera unos minutos.',
+    })[e.code] || 'No pudimos iniciar sesión. Intenta de nuevo.';
+    err.hidden = false;
+  } finally { b.disabled = false; b.textContent = 'Ingresar'; }
+});
+$('logout').onclick = $('deniedOut').onclick = () => signOut(auth);
+
+/* ── Pestañas ── */
+function tab(which) {
+  const links = which === 'links';
+  $('tab-links').setAttribute('aria-selected', links); $('tab-docs').setAttribute('aria-selected', !links);
+  $('p-links').hidden = !links; $('p-docs').hidden = links;
+}
+$('tab-links').onclick = () => tab('links'); $('tab-docs').onclick = () => tab('docs');
+
+/* ── Cursos ── */
+const labelOf = k => (C.DOCS.find(d => d.key === k) || { label: k }).label;
+async function loadCourses() {
+  courses = (await adm('/api/admin/courses')).courses;
+  $('fCurso').innerHTML = '<option value="">Elige un curso…</option>' + courses.map(c => `<option value="${c.id}">${esc(c.label)}</option>`).join('');
+  updateCourse();
+}
+function updateCourse() {
+  const c = courses.find(x => x.id === $('fCurso').value);
+  $('sexoField').hidden = !(c && c.pideSexo);
+  if (!(c && c.pideSexo)) $('fSexo').value = '';
+  const h = $('reqHint');
+  if (!c) { h.hidden = true; return; }
+  const sexo = $('fSexo').value;
+  const docs = [...c.docs, ...(c.pideSexo && sexo === 'H' ? c.soloHombres : [])];
+  let txt = `<strong>Pedirá ${docs.length} archivos:</strong> ${docs.map(labelOf).join(', ')}.`;
+  if (c.pideSexo && !sexo) txt += ' La situación militar se pide solo a hombres: elige el sexo para confirmarlo.';
+  if (c.pideSexo && sexo === 'M') txt += ' No pide situación militar.';
+  h.innerHTML = txt; h.hidden = false;
+}
+$('fCurso').onchange = $('fSexo').onchange = updateCourse;
+
+/* ── RUT ── */
+function rutCheck(input) {
+  const s = String(input).toUpperCase().replace(/[^0-9K]/g, '');
+  if (s.length < 8 || s.length > 9) return null;
+  const body = s.slice(0, -1), dv = s.slice(-1);
+  if (!/^\d+$/.test(body)) return null;
+  let sum = 0, m = 2;
+  for (let i = body.length - 1; i >= 0; i--) { sum += +body[i] * m; m = m === 7 ? 2 : m + 1; }
+  const r = 11 - (sum % 11), exp = r === 11 ? '0' : r === 10 ? 'K' : String(r);
+  return dv === exp ? body + '-' + dv : null;
+}
+$('fRut').addEventListener('input', e => {
+  const s = e.target.value.toUpperCase().replace(/[^0-9K]/g, '').slice(0, 9);
+  if (s.length > 1) e.target.value = fmtRut(s.slice(0, -1) + '-' + s.slice(-1));
+  const h = $('rutHint');
+  if (s.length >= 8) { const ok = rutCheck(s); h.textContent = ok ? 'RUT válido' : 'El dígito verificador no coincide'; h.className = 'hint' + (ok ? '' : ' err'); }
+  else h.textContent = '';
+});
+
+/* ── Crear enlace ── */
+$('newForm').addEventListener('submit', async ev => {
+  ev.preventDefault();
+  const err = $('newErr'); err.hidden = true;
+  const nombre = $('fNombre').value.trim(), rut = rutCheck($('fRut').value);
+  if (nombre.length < 3) { err.textContent = 'Escribe el nombre completo.'; err.hidden = false; return; }
+  if (!rut) { err.textContent = 'El RUT no es válido. Revisa el dígito verificador.'; err.hidden = false; return; }
+  const cursoId = $('fCurso').value, course = courses.find(x => x.id === cursoId);
+  if (!course) { err.textContent = 'Elige el curso.'; err.hidden = false; return; }
+  if (course.pideSexo && !$('fSexo').value) { err.textContent = 'Indica si la persona es hombre o mujer.'; err.hidden = false; return; }
+  const b = $('newBtn'); b.disabled = true; b.textContent = 'Generando…';
+  try {
+    const j = await adm('/api/admin/tokens', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ nombre, rut, cursoId, sexo: $('fSexo').value, nota: $('fNota').value }) });
+    lastCreated = { token: j.token, nombre, rut, expira: j.expira };
+    $('fWho').textContent = `${nombre} · RUT ${fmtRut(rut)}`;
+    $('fExp').textContent = `Sirve una sola vez · vence el ${fmtD(j.expira)}`;
+    $('fLink').textContent = linkOf(j.token);
+    $('folio').hidden = false; $('folio').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    $('newForm').reset(); $('rutHint').textContent = ''; updateCourse();
+    await loadList();
+  } catch (e) { err.textContent = e.msg || 'No pudimos generar el enlace.'; err.hidden = false; }
+  finally { b.disabled = false; b.textContent = 'Generar enlace'; }
+});
+
+async function copy(text, ok) {
+  try { await navigator.clipboard.writeText(text); toast(ok); }
+  catch { prompt('Copia esto:', text); }
+}
+$('fCopy').onclick = () => copy(linkOf(lastCreated.token), 'Enlace copiado');
+$('fWa').onclick = () => {
+  const first = lastCreated.nombre.split(' ')[0];
+  const msg = `*INASEP · Documentos de matrícula*\n\nHola ${first}, sube tus documentos en este enlace personal. Sirve una sola vez y vence en 12 horas:\n\n${linkOf(lastCreated.token)}`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(msg), '_blank', 'noopener');
+};
+$('fMail').onclick = () => {
+  const first = lastCreated.nombre.split(' ')[0];
+  const body = `Hola ${first},\n\nSube tus documentos de matrícula en este enlace personal. Sirve una sola vez y vence en 12 horas:\n\n${linkOf(lastCreated.token)}\n\nSaludos,\nCoordinación INASEP`;
+  location.href = 'mailto:?subject=' + encodeURIComponent('INASEP · Sube tus documentos de matrícula') + '&body=' + encodeURIComponent(body);
+};
+
+/* ── Lista ── */
+async function loadList() {
+  const j = await adm('/api/admin/tokens');
+  list = j.tokens;
+  renderLinks(); renderPeople();
+}
+$('reload').onclick = $('reload2').onclick = async () => { try { await loadList(); toast('Lista actualizada'); } catch { toast('No se pudo actualizar'); } };
+$('qLinks').oninput = $('stLinks').onchange = () => renderLinks();
+$('qDocs').oninput = () => renderPeople();
+
+const match = (r, q) => { q = q.trim().toLowerCase().replace(/[.]/g, ''); return !q || r.nombre.toLowerCase().includes(q) || r.rut.toLowerCase().includes(q.replace(/[.]/g, '')); };
+
+function badge(r) {
+  if (r.estado === 'usado') return '<span class="badge b-ok">Enviado</span>';
+  const total = r.req || C.DOCS.filter(d => !d.auto).length;
+  if (r.estado === 'expirado') return '<span class="badge b-exp">Vencido</span>' + (r.n ? ` <span class="badge b-inc">${r.n}/${total}</span>` : '');
+  return r.n ? `<span class="badge b-inc">En curso ${r.n}/${total}</span>` : '<span class="badge b-pend">Pendiente</span>';
+}
+
+function renderLinks() {
+  const st = $('stLinks').value, q = $('qLinks').value;
+  const rows = list.filter(r => (!st || r.estado === st) && match(r, q));
+  if (!rows.length) { $('tbl').innerHTML = `<div class="empty">${list.length ? 'Ningún enlace coincide con el filtro.' : 'Aún no generas enlaces. Crea el primero arriba.'}</div>`; return; }
+  $('tbl').innerHTML = `<table><thead><tr><th>Persona</th><th>Curso</th><th>Estado</th><th>Creado</th><th>Vence / Enviado</th><th></th></tr></thead><tbody>${rows.map(r => `
+    <tr>
+      <td><div class="nm">${esc(r.nombre)}</div><div class="sub">${esc(fmtRut(r.rut))}</div></td>
+      <td>${esc(r.curso || '—')}</td>
+      <td>${badge(r)}</td>
+      <td class="sub">${fmtD(r.creadoEn)}</td>
+      <td class="sub">${r.estado === 'usado' ? fmtD(r.usadoEn) : fmtD(r.expira)}</td>
+      <td><div class="acts">
+        ${r.estado === 'pendiente' ? `<button class="btn btn-line btn-sm" data-a="copy" data-t="${r.token}">Copiar enlace</button>` : ''}
+        ${r.estado === 'expirado' ? `<button class="btn btn-line btn-sm" data-a="renew" data-t="${r.token}">Nuevo enlace</button>` : ''}
+        ${r.n ? `<button class="btn btn-primary btn-sm" data-a="open" data-t="${r.token}">Ver documentos</button>` : ''}
+        <button class="btn btn-danger-line btn-sm" data-a="del" data-t="${r.token}" aria-label="Eliminar enlace de ${esc(r.nombre)}">Eliminar</button>
+      </div></td>
+    </tr>`).join('')}</tbody></table>`;
+}
+
+$('tbl').addEventListener('click', async ev => {
+  const b = ev.target.closest('button[data-a]'); if (!b) return;
+  const t = b.dataset.t, r = list.find(x => x.token === t), a = b.dataset.a;
+  if (a === 'copy') copy(linkOf(t), 'Enlace copiado');
+  if (a === 'open') openPerson(t);
+  if (a === 'renew') {
+    $('fNombre').value = r.nombre; $('fRut').value = fmtRut(r.rut); $('fCurso').value = r.cursoId || ''; updateCourse(); $('fSexo').value = r.sexo || ''; updateCourse();
+    window.scrollTo({ top: 0, behavior: 'smooth' }); $('fNombre').focus();
+    toast('Datos cargados. Presiona «Generar enlace».');
+  }
+  if (a === 'del') {
+    const extra = r.n ? '\n\nLos archivos ya subidos se conservan en Google Drive; solo se quita el registro de este panel.' : '';
+    if (!confirm(`¿Eliminar el enlace de ${r.nombre}?${extra}`)) return;
+    try { await adm('/api/admin/delete', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ token: t }) }); await loadList(); toast('Enlace eliminado'); }
+    catch { toast('No se pudo eliminar'); }
+  }
+});
+
+function renderPeople() {
+  const withDocs = list.filter(r => r.n > 0);
+  $('nDocs').textContent = list.filter(r => r.estado === 'usado').length;
+  const rows = withDocs.filter(r => match(r, $('qDocs').value))
+    .sort((a, b) => (b.usadoEn || b.creadoEn) - (a.usadoEn || a.creadoEn));
+  if (!rows.length) { $('people').innerHTML = `<div class="empty">${withDocs.length ? 'Nadie coincide con la búsqueda.' : 'Todavía nadie envía documentos. Cuando suban sus archivos aparecerán aquí.'}</div>`; return; }
+  $('people').innerHTML = rows.map(r => `
+    <button class="person" data-t="${r.token}">
+      <span class="folder-ic" aria-hidden="true"></span>
+      <span><span class="nm">${esc(r.nombre)}</span><br><span class="sub">${esc(fmtRut(r.rut))}${r.curso ? ' · ' + esc(r.curso) : ''}</span></span>
+      <span class="right">${badge(r)}<br>${fmtD(r.usadoEn || r.creadoEn)}</span>
+    </button>`).join('');
+}
+$('people').addEventListener('click', ev => { const b = ev.target.closest('.person'); if (b) openPerson(b.dataset.t); });
+
+/* ── Detalle de persona ── */
+const cache = new Map(); // token|slot → { blob, name }
+let cur = null, prevUrl = null;
+
+async function openPerson(t) {
+  let rec;
+  try { rec = (await adm('/api/admin/record?t=' + t)).record; } catch { toast('No pudimos abrir esa carpeta'); return; }
+  cur = rec;
+  $('dTitle').textContent = rec.nombre;
+  $('dSub').textContent = `RUT ${fmtRut(rec.rut)}${rec.curso ? ' · ' + rec.curso : ''}${rec.sexo ? (rec.sexo === 'H' ? ' · Hombre' : ' · Mujer') : ''}`;
+  $('dMeta').textContent = (rec.usado ? 'Enviado el ' + fmtD(rec.usadoEn) : 'Envío incompleto · enlace creado el ' + fmtD(rec.creadoEn)) + (rec.nota ? ' · Nota: ' + rec.nota : '');
+  const dt = rec.datos;
+  $('dDatos').innerHTML = dt ? `<strong>Contacto:</strong> ${esc(dt.direccion)}, ${esc(dt.comuna)} · ${esc(dt.fono)} · ${esc(dt.mail)}` +
+    (rec.codigo ? `<br><strong>Declaración aceptada:</strong> ${fmtD(rec.aceptoEn)} · Código ${esc(rec.codigo)}` : '') : '';
+  $('dRows').innerHTML = C.DOCS.filter(d => d.auto ? !!rec.archivos[d.key] : (!rec.req || rec.req.includes(d.key))).map(d => {
+    const f = rec.archivos[d.key];
+    return f ? `<div class="drow"><div><div class="t">${esc(d.label)}</div><div class="sub">${esc(f.name)} · ${fmtSize(f.size)} · ${fmtD(f.subidoEn)}</div></div>
+        <div class="acts"><button class="btn btn-line btn-sm" data-a="view" data-k="${d.key}">Ver</button><button class="btn btn-line btn-sm" data-a="dl" data-k="${d.key}">Descargar</button></div></div>`
+      : `<div class="drow miss"><div class="t">${esc(d.label)}</div><span class="badge b-exp">No enviado</span></div>`;
+  }).join('');
+  $('dZip').disabled = !Object.keys(rec.archivos).length;
+  $('dDrive').hidden = !rec.folderUrl; if (rec.folderUrl) $('dDrive').href = rec.folderUrl;
+  clearPrev();
+  if (!$('dlg').open) $('dlg').showModal();
+}
+
+function clearPrev() { if (prevUrl) URL.revokeObjectURL(prevUrl); prevUrl = null; $('dPrev').hidden = true; $('dPrev').innerHTML = ''; }
+$('dClose').onclick = () => $('dlg').close();
+$('dlg').addEventListener('close', clearPrev);
+$('dlg').addEventListener('click', e => { if (e.target === $('dlg')) $('dlg').close(); });
+
+async function fetchFile(rec, key) {
+  const ck = rec.token + '|' + key;
+  if (cache.has(ck)) return cache.get(ck);
+  const j = await adm(`/api/admin/file?t=${rec.token}&slot=${key}`);
+  if (!j.ok) throw new Error(j.error);
+  const bin = atob(j.data), u8 = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+  const out = { blob: new Blob([u8], { type: j.mime }), name: j.name };
+  cache.set(ck, out); return out;
+}
+
+function saveBlob(blob, name) {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+  a.style.display = 'none'; document.body.appendChild(a); a.click(); setTimeout(() => { a.remove(); URL.revokeObjectURL(a.href); }, 4000);
+}
+const safe = s => s.replace(/[\\/:*?"<>|]/g, ' ').replace(/\s+/g, ' ').trim();
+
+$('dRows').addEventListener('click', async ev => {
+  const b = ev.target.closest('button[data-a]'); if (!b) return;
+  const key = b.dataset.k, old = b.textContent; b.disabled = true; b.innerHTML = '<span class="spin"></span>';
+  try {
+    const f = await fetchFile(cur, key);
+    if (b.dataset.a === 'dl') saveBlob(f.blob, `${cur.rut} ${C.DOCS.find(d => d.key === key).label.split(',')[0]} - ${f.name}`.replace(/[\\/:*?"<>|]/g, ' '));
+    else {
+      clearPrev(); prevUrl = URL.createObjectURL(f.blob);
+      const isPdf = f.blob.type === 'application/pdf';
+      $('dPrev').innerHTML = `<div class="bar"><span>${esc(f.name)}</span><a href="${prevUrl}" target="_blank" rel="noopener">Abrir en pestaña nueva</a></div>` +
+        (isPdf ? `<iframe src="${prevUrl}" title="${esc(f.name)}"></iframe>` : `<img src="${prevUrl}" alt="${esc(f.name)}">`);
+      $('dPrev').hidden = false; $('dPrev').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  } catch { toast('No pudimos traer el archivo desde Drive'); }
+  finally { b.disabled = false; b.textContent = old; }
+});
+
+$('dZip').onclick = async () => {
+  const b = $('dZip'), old = b.textContent; b.disabled = true; b.innerHTML = '<span class="spin"></span>&nbsp; Preparando…';
+  try {
+    if (!window.JSZip) throw new Error('zip');
+    const zip = new JSZip();
+    for (const k of Object.keys(cur.archivos)) { const f = await fetchFile(cur, k); zip.file(f.name, f.blob); }
+    saveBlob(await zip.generateAsync({ type: 'blob' }), safe(`${cur.rut} - ${cur.nombre}`) + '.zip');
+  } catch { toast('No pudimos armar el ZIP'); }
+  finally { b.disabled = false; b.textContent = old; }
+};
+</script>
+</body>
+</html>
